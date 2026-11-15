@@ -122,7 +122,7 @@ xw
         # Resolve memory error reporting on MacPro7,1 SMBIOS
         if self.model in model_array.MacPro:
             logging.info("- Disabling memory error reporting")
-            re_block_args.append("pcie")
+            re_block_args.append("pci")
 
         # Resolve mediaanalysisd crashing on 3802 GPUs
         # Applicable for systems that are the primary iCloud Photos library host, with large amounts of unprocessed faces
@@ -159,6 +159,11 @@ xw
         if smbios_data.smbios_dictionary[self.model]["CPU Generation"] < cpu_data.CPUGen.sandy_bridge.value:
             logging.info("- Fixing AVX hardcoding in JavaScriptCore")
             re_patch_args.append("jsc")
+
+        # Resolve PCI UI reporting on MacPro7,1 SMBIOS spoofs
+        if self.model in model_array.MacPro and self.constants.serial_settings != "None":
+            logging.info("- Fixing PCI UI reporting on MacPro7,1 SMBIOS")
+            re_patch_args.append("pci")
 
         return re_patch_args
 

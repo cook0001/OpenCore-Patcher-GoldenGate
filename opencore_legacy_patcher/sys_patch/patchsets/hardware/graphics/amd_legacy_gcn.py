@@ -104,7 +104,7 @@ class AMDLegacyGCN(BaseHardware):
                         "AMDSupport.kext":               "12.5",
 
                         "AMDRadeonVADriver.bundle":      "12.5",
-                        "AMDRadeonVADriver2.bundle":     "12.5",
+                        "AMDRadeonVADriver2.bundle":     "12.5-25" if self._xnu_major >= os_data.tahoe else "12.5",
                         "AMDRadeonX4000GLDriver.bundle": "12.5",
                         "AMDMTLBronzeDriver.bundle":     bronze_bundle_source,
                         "AMDShared.bundle":              "12.5-GCN-25" if self._xnu_major >= os_data.tahoe else "12.5",

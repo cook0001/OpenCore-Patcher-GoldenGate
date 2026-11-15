@@ -114,7 +114,7 @@ class AMDPolaris(BaseHardware):
                     "/System/Library/Extensions": {
                         "AMDRadeonX4000.kext":           self._resolve_monterey_framebuffers(),
                         "AMDRadeonX4000HWServices.kext": "12.5",
-                        "AMDRadeonVADriver2.bundle":     "12.5",
+                        "AMDRadeonVADriver2.bundle":     "12.5-25" if self._xnu_major >= os_data.tahoe else "12.5",
                         "AMDRadeonX4000GLDriver.bundle": "12.5",
                         "AMDMTLBronzeDriver.bundle":     metal_driver_source,
                         "AMDShared.bundle":              "12.5-GCN-25" if self._xnu_major >= os_data.tahoe else "12.5",

@@ -56,6 +56,17 @@ class BuildGraphicsAudio:
         self._ioaccel_workaround()
 
 
+    def _append_boot_args(self, args: list) -> bool:
+        """
+        Append missing boot arguments
+        """
+        existing = self.config["NVRAM"]["Add"]["7C436110-AB2A-4BBB-A880-FE41995C9F82"]["boot-args"].split()
+        missing = [arg for arg in dict.fromkeys(args) if arg not in existing]
+        if missing:
+            self.config["NVRAM"]["Add"]["7C436110-AB2A-4BBB-A880-FE41995C9F82"]["boot-args"] += " " + " ".join(missing)
+        return bool(missing)
+
+
     def _graphics_handling(self) -> None:
         """
         Graphics Handling
@@ -78,10 +89,14 @@ class BuildGraphicsAudio:
                         logging.info(f"- Found dGPU ({i + 1}) at {device.pci_path}")
                         if isinstance(device, device_probe.AMD):
                             logging.info("- Adding Mac Pro, Xserve DRM patches")
-                            self.config["DeviceProperties"]["Add"][device.pci_path] = {"shikigva": 128, "unfairgva": 1, "rebuild-device-tree": 1, "agdpmod": "pikera", "enable-gva-support": 1}
+                            self.config["DeviceProperties"]["Add"].setdefault(device.pci_path, {}).update(
+                                {"shikigva": 128, "unfairgva": 1, "rebuild-device-tree": 1, "agdpmod": "pikera", "enable-gva-support": 1}
+                            )
                         elif isinstance(device, device_probe.NVIDIA):
                             logging.info("- Enabling Nvidia Output Patch")
-                            self.config["DeviceProperties"]["Add"][device.pci_path] = {"rebuild-device-tree": 1, "agdpmod": "vit9696"}
+                            self.config["DeviceProperties"]["Add"].setdefault(device.pci_path, {}).update(
+                                {"rebuild-device-tree": 1, "agdpmod": "vit9696"}
+                            )
                             self.config["UEFI"]["Quirks"]["ForgeUefiSupport"] = True
                             self.config["UEFI"]["Quirks"]["ReloadOptionRoms"] = True
 
@@ -89,16 +104,12 @@ class BuildGraphicsAudio:
                         logging.info(f"- Failed to find Device path for dGPU {i + 1}")
                         if isinstance(device, device_probe.AMD):
                             logging.info("- Adding Mac Pro, Xserve DRM patches")
-                            if "shikigva=128 unfairgva=1" not in self.config["NVRAM"]["Add"]["7C436110-AB2A-4BBB-A880-FE41995C9F82"]["boot-args"]:
+                            if self._append_boot_args(["shikigva=128", "unfairgva=1", "agdpmod=pikera", "radgva=1", "-wegtree"]):
                                 logging.info("- Falling back to boot-args")
-                                self.config["NVRAM"]["Add"]["7C436110-AB2A-4BBB-A880-FE41995C9F82"]["boot-args"] += " shikigva=128 unfairgva=1 agdpmod=pikera radgva=1" + (
-                                    " -wegtree" if "-wegtree" not in self.config["NVRAM"]["Add"]["7C436110-AB2A-4BBB-A880-FE41995C9F82"]["boot-args"] else ""
-                                )
                         elif isinstance(device, device_probe.NVIDIA):
                             logging.info("- Enabling Nvidia Output Patch")
-                            if "-wegtree agdpmod=vit9696" not in self.config["NVRAM"]["Add"]["7C436110-AB2A-4BBB-A880-FE41995C9F82"]["boot-args"]:
+                            if self._append_boot_args(["-wegtree", "agdpmod=vit9696"]):
                                 logging.info("- Falling back to boot-args")
-                                self.config["NVRAM"]["Add"]["7C436110-AB2A-4BBB-A880-FE41995C9F82"]["boot-args"] += " -wegtree agdpmod=vit9696"
                             self.config["UEFI"]["Quirks"]["ForgeUefiSupport"] = True
                             self.config["UEFI"]["Quirks"]["ReloadOptionRoms"] = True
 
@@ -107,7 +118,10 @@ class BuildGraphicsAudio:
 
             else:
                 logging.info("- Adding Mac Pro, Xserve DRM patches")
-                self.config["NVRAM"]["Add"]["7C436110-AB2A-4BBB-A880-FE41995C9F82"]["boot-args"] += " shikigva=128 unfairgva=1 -wegtree"
+                drm_args = ["shikigva=128", "unfairgva=1", "-wegtree"]
+                if self.model == "MacPro6,1":
+                    drm_args.extend(["agdpmod=pikera", "radgva=1"])
+                self._append_boot_args(drm_args)
 
             if not support.BuildSupport(self.model, self.constants, self.config).get_kext_by_bundle_path("WhateverGreen.kext")["Enabled"] is True:
                 support.BuildSupport(self.model, self.constants, self.config).enable_kext("WhateverGreen.kext", self.constants.whatevergreen_version, self.constants.whatevergreen_path)
@@ -321,7 +335,7 @@ class BuildGraphicsAudio:
         Audio Handler
         """
 
-        if (self.model in model_array.LegacyAudio or self.model in model_array.MacPro) and self.constants.set_alc_usage is True:
+        if (self.model in model_array.LegacyAudio or (self.model in model_array.MacPro and self.model != "MacPro6,1")) and self.constants.set_alc_usage is True:
             support.BuildSupport(self.model, self.constants, self.config).enable_kext("AppleALC.kext", self.constants.applealc_version, self.constants.applealc_path)
 
         # Audio Patch

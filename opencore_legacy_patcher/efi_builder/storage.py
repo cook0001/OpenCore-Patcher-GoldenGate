@@ -112,7 +112,7 @@ class BuildStorage:
             for i, controller in enumerate(self.computer.storage):
                 logging.info(f"- Fixing PCIe Storage Controller ({i + 1}) reporting")
                 if controller.pci_path:
-                    self.config["DeviceProperties"]["Add"][controller.pci_path] = {"built-in": 1}
+                    self.config["DeviceProperties"]["Add"].setdefault(controller.pci_path, {})["built-in"] = 1
                 else:
                     logging.info(f"- Failed to find Device path for PCIe Storage Controller {i}, falling back to Innie")
                     support.BuildSupport(self.model, self.constants, self.config).enable_kext("Innie.kext", self.constants.innie_version, self.constants.innie_path)
@@ -127,18 +127,20 @@ class BuildStorage:
                     self.config["#Revision"][f"Hardware-NVMe-{i}"] = f"{utilities.friendly_hex(controller.vendor_id)}:{utilities.friendly_hex(controller.device_id)}"
 
                     # Disable Bit 0 (L0s), enable Bit 1 (L1)
-                    nvme_aspm = (controller.aspm & (~0b11)) | 0b10
+                    nvme_aspm = ((controller.aspm or 0) & (~0b11)) | 0b10
 
                     if controller.pci_path:
                         logging.info(f"- Found NVMe ({i}) at {controller.pci_path}")
                         self.config["DeviceProperties"]["Add"].setdefault(controller.pci_path, {})["pci-aspm-default"] = nvme_aspm
-                        self.config["DeviceProperties"]["Add"][controller.pci_path.rpartition("/")[0]] = {"pci-aspm-default": nvme_aspm}
+                        parent_path = controller.pci_path.rpartition("/")[0]
+                        if parent_path:
+                            self.config["DeviceProperties"]["Add"].setdefault(parent_path, {})["pci-aspm-default"] = nvme_aspm
                     else:
                         if "-nvmefaspm" not in self.config["NVRAM"]["Add"]["7C436110-AB2A-4BBB-A880-FE41995C9F82"]["boot-args"]:
                             logging.info("- Falling back to -nvmefaspm")
                             self.config["NVRAM"]["Add"]["7C436110-AB2A-4BBB-A880-FE41995C9F82"]["boot-args"] += " -nvmefaspm"
 
-                    if (controller.vendor_id != 0x144D and controller.device_id != 0xA804):
+                    if not (controller.vendor_id == 0x144D and controller.device_id == 0xA804):
                         # Avoid injecting NVMeFix when a native Apple NVMe drive is present
                         # https://github.com/acidanthera/NVMeFix/blob/1.0.9/NVMeFix/NVMeFix.cpp#L220-L225
                         support.BuildSupport(self.model, self.constants, self.config).enable_kext("NVMeFix.kext", self.constants.nvmefix_version, self.constants.nvmefix_path)

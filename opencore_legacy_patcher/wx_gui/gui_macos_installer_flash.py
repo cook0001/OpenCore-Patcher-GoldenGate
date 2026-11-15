@@ -496,22 +496,23 @@ class macOSInstallerFlashFrame(wx.Frame):
             logging.info(kdk_obj.error_msg)
             return
 
-        kdk_download_obj = kdk_obj.retrieve_download(override_path=kdk_dmg_path)
-        if kdk_download_obj is None:
-            logging.info("Failed to retrieve KDK")
-            logging.info(kdk_obj.error_msg)
-
-        # Check remaining disk space before downloading
+        # Check remaining disk space before preparing download destination
         space = utilities.get_free_space(download_dir)
         if space < (kdk_obj.kdk_url_expected_size * 2):
             logging.info("Not enough disk space to download and install KDK")
-            logging.info(f"Attempting to download locally first")
+            logging.info("Attempting to download locally first")
             if space < kdk_obj.kdk_url_expected_size:
                 logging.info("Not enough disk space to install KDK, skipping")
                 return
             # Ideally we'd download the KDK onto the disk to display progress in the UI
             # However we'll just download to our temp directory and move it to the target disk
             kdk_dmg_path = self.constants.kdk_download_path
+
+        kdk_download_obj = kdk_obj.retrieve_download(override_path=kdk_dmg_path)
+        if kdk_download_obj is None:
+            logging.info("Failed to retrieve KDK")
+            logging.info(kdk_obj.error_msg)
+            return
 
         kdk_download_obj.download(spawn_thread=False)
         if kdk_download_obj.download_complete is False:
@@ -571,6 +572,7 @@ class macOSInstallerFlashFrame(wx.Frame):
         if metallib_download_obj is None:
             logging.info("Failed to retrieve Metallib")
             logging.info(metallib_obj.error_msg)
+            return
 
         # Check remaining disk space before downloading
         space = utilities.get_free_space(download_dir)

@@ -5,6 +5,7 @@ subprocess_wrapper.py: Wrapper for subprocess module to better handle errors and
 
 import enum
 import logging
+import os
 import subprocess
 
 from pathlib import Path
@@ -50,6 +51,9 @@ def run_as_root(*args, **kwargs) -> subprocess.CompletedProcess:
     # Check if first argument exists
     if not Path(args[0][0]).exists():
         raise FileNotFoundError(f"File not found: {args[0][0]}")
+
+    if os.geteuid() == 0:
+        return subprocess.run([args[0][0]] + args[0][1:], **kwargs)
 
     return subprocess.run([OCLP_PRIVILEGED_HELPER] + [args[0][0]] + args[0][1:], **kwargs)
 

@@ -711,7 +711,11 @@ class Computer:
     def dgpu_probe(self):
         device = next(ioreg.ioiterator_to_list(ioreg.IOServiceGetMatchingServices(ioreg.kIOMasterPortDefault, ioreg.IOServiceNameMatching("GFX0".encode()), None)[1]), None)
         if not device:
-            # No devices
+            # MacPro6,1 exposes GFX1/GFX2 instead of GFX0 (name becomes ATY,*Parent)
+            discrete = [g for g in self.gpus if not isinstance(g, Intel) and g.name != "IGPU"]
+            gfx = sorted((g for g in discrete if (g.name or "").startswith("GFX") or (g.acpi_path and "/GFX" in g.acpi_path)), key=lambda g: g.acpi_path or g.name or "")
+            if gfx or discrete:
+                self.dgpu = (gfx or discrete)[0]
             return
 
         vendor: Type[GPU] = PCIDevice.from_ioregistry(device).vendor_detect(inherits=GPU)  # type: ignore

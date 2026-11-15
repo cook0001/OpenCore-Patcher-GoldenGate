@@ -789,6 +789,88 @@ class MacPro:
         firmware_vendor='Apple'
     )
 
+    MacPro61_Stock = device_probe.Computer(
+        real_model='MacPro6,1',
+        real_board_id='Mac-F60DEB81FF30ACF6',
+        reported_model='MacPro6,1',
+        reported_board_id='Mac-F60DEB81FF30ACF6',
+        build_model='MacPro6,1',
+        gpus=[
+            device_probe.AMD(vendor_id=4098, device_id=26526, class_code=196608, name='ATY,KaniParent', model='AMD FirePro D500', acpi_path='IOACPIPlane:/_SB/PCI0@0/GFXA@20000/GFX1@0', pci_path='PciRoot(0x0)/Pci(0x2,0x0)/Pci(0x0,0x0)', disable_metal=False, force_compatible=False),
+            device_probe.AMD(vendor_id=4098, device_id=26526, class_code=196608, name='ATY,KaniSParent', model='AMD FirePro D500', acpi_path='IOACPIPlane:/_SB/PCI0@0/GFXB@30000/GFX2@0', pci_path='PciRoot(0x0)/Pci(0x3,0x0)/Pci(0x0,0x0)', disable_metal=False, force_compatible=False),
+        ],
+        igpu=None,
+        dgpu=device_probe.AMD(vendor_id=4098, device_id=26526, class_code=196608, name='ATY,KaniParent', model='AMD FirePro D500', acpi_path='IOACPIPlane:/_SB/PCI0@0/GFXA@20000/GFX1@0', pci_path='PciRoot(0x0)/Pci(0x2,0x0)/Pci(0x0,0x0)', disable_metal=False, force_compatible=False),
+        storage=[
+            device_probe.NVMeController(vendor_id=4203, device_id=8193, class_code=67586, name='SSD0', model=None, acpi_path='IOACPIPlane:/_SB/PCI0@0/RP05@1c0004/SSD0@0', pci_path='PciRoot(0x0)/Pci(0x1C,0x4)/Pci(0x0,0x0)', disable_metal=False, force_compatible=False, aspm=2),
+        ],
+        usb_controllers=[
+            device_probe.XHCIController(vendor_id=7027, device_id=4352, class_code=787248, name='pci1b73,1100', model=None, acpi_path='IOACPIPlane:/_SB/PCI0@0/PEG0@10000/BR00@0/BR13@10000/XHC1@0', pci_path='PciRoot(0x0)/Pci(0x1,0x0)/Pci(0x0,0x0)/Pci(0x1,0x0)/Pci(0x0,0x0)', disable_metal=False, force_compatible=False),
+            device_probe.EHCIController(vendor_id=32902, device_id=7469, class_code=787232, name='pci8086,1d2d', model=None, acpi_path='IOACPIPlane:/_SB/PCI0@0/EHC2@1a0000', pci_path='PciRoot(0x0)/Pci(0x1A,0x0)', disable_metal=False, force_compatible=False),
+            device_probe.EHCIController(vendor_id=32902, device_id=7462, class_code=787232, name='pci8086,1d26', model=None, acpi_path='IOACPIPlane:/_SB/PCI0@0/EHC1@1d0000', pci_path='PciRoot(0x0)/Pci(0x1D,0x0)', disable_metal=False, force_compatible=False),
+        ],
+        sdxc_controller=[],
+        ethernet=[
+            device_probe.BroadcomEthernet(vendor_id=5348, device_id=5762, class_code=131072, name='ethernet', model='Broadcom 57762', acpi_path='IOACPIPlane:/_SB/PCI0@0/RP01@1c0000/ETH1@0', pci_path='PciRoot(0x0)/Pci(0x1C,0x0)/Pci(0x0,0x0)', disable_metal=False, force_compatible=False),
+            device_probe.BroadcomEthernet(vendor_id=5348, device_id=5762, class_code=131072, name='ethernet', model='Broadcom 57762', acpi_path='IOACPIPlane:/_SB/PCI0@0/RP02@1c0001/ETH0@0', pci_path='PciRoot(0x0)/Pci(0x1C,0x1)/Pci(0x0,0x0)', disable_metal=False, force_compatible=False),
+        ],
+        wifi=device_probe.Broadcom(vendor_id=5348, device_id=17312, class_code=163840, name='pci14e4,43a0', model=None, acpi_path='IOACPIPlane:/_SB/PCI0@0/RP03@1c0002/ARPT@0', pci_path='PciRoot(0x0)/Pci(0x1C,0x2)/Pci(0x0,0x0)', disable_metal=False, force_compatible=False),
+        cpu=device_probe.CPU(
+            name='Intel(R) Xeon(R) CPU E5-1680 v2 @ 3.00GHz',
+            flags=['FPU', 'VME', 'DE', 'PSE', 'TSC', 'MSR', 'PAE', 'MCE', 'CX8', 'APIC', 'SEP', 'MTRR', 'PGE', 'MCA', 'CMOV', 'PAT', 'PSE36', 'CLFSH', 'DS', 'ACPI', 'MMX', 'FXSR', 'SSE', 'SSE2', 'SS', 'HTT', 'TM', 'PBE', 'SSE3', 'PCLMULQDQ', 'DTES64', 'MON', 'DSCPL', 'VMX', 'SMX', 'EST', 'TM2', 'SSSE3', 'CX16', 'TPR', 'PDCM', 'SSE4.1', 'SSE4.2', 'x2APIC', 'POPCNT', 'AES', 'PCID', 'XSAVE', 'OSXSAVE', 'TSCTMR', 'AVX1.0', 'RDRAND', 'F16C'],
+            leafs=['RDWRFSGS', 'SMEP', 'ERMS', 'MDCLEAR', 'IBRS', 'STIBP', 'L1DF', 'SSBD'],
+        ),
+        oclp_version=None,
+        opencore_version=None,
+        bluetooth_chipset='BRCM20702B0',
+        ambient_light_sensor=False,
+        third_party_sata_ssd=False,
+        secure_boot_model=None,
+        secure_boot_policy=0,
+        firmware_vendor='Apple',
+    )
+
+    MacPro61_NVMe_Upgrade = device_probe.Computer(
+        real_model='MacPro6,1',
+        real_board_id='Mac-F60DEB81FF30ACF6',
+        reported_model='MacPro6,1',
+        reported_board_id='Mac-F60DEB81FF30ACF6',
+        build_model='MacPro6,1',
+        gpus=[
+            device_probe.AMD(vendor_id=4098, device_id=26520, class_code=196608, name='ATY,KaniParent', model='AMD FirePro D700', acpi_path='IOACPIPlane:/_SB/PCI0@0/GFXA@20000/GFX1@0', pci_path='PciRoot(0x0)/Pci(0x2,0x0)/Pci(0x0,0x0)', disable_metal=False, force_compatible=False),
+            device_probe.AMD(vendor_id=4098, device_id=26520, class_code=196608, name='ATY,KaniSParent', model='AMD FirePro D700', acpi_path='IOACPIPlane:/_SB/PCI0@0/GFXB@30000/GFX2@0', pci_path='PciRoot(0x0)/Pci(0x3,0x0)/Pci(0x0,0x0)', disable_metal=False, force_compatible=False),
+        ],
+        igpu=None,
+        dgpu=device_probe.AMD(vendor_id=4098, device_id=26520, class_code=196608, name='ATY,KaniParent', model='AMD FirePro D700', acpi_path='IOACPIPlane:/_SB/PCI0@0/GFXA@20000/GFX1@0', pci_path='PciRoot(0x0)/Pci(0x2,0x0)/Pci(0x0,0x0)', disable_metal=False, force_compatible=False),
+        storage=[
+            device_probe.NVMeController(vendor_id=5197, device_id=43016, class_code=67586, name='SSD0', model=None, acpi_path='IOACPIPlane:/_SB/PCI0@0/RP05@1c0004/SSD0@0', pci_path='PciRoot(0x0)/Pci(0x1C,0x4)/Pci(0x0,0x0)', disable_metal=False, force_compatible=False, aspm=2),
+        ],
+        usb_controllers=[
+            device_probe.XHCIController(vendor_id=7027, device_id=4352, class_code=787248, name='pci1b73,1100', model=None, acpi_path='IOACPIPlane:/_SB/PCI0@0/PEG0@10000/BR00@0/BR13@10000/XHC1@0', pci_path='PciRoot(0x0)/Pci(0x1,0x0)/Pci(0x0,0x0)/Pci(0x1,0x0)/Pci(0x0,0x0)', disable_metal=False, force_compatible=False),
+            device_probe.EHCIController(vendor_id=32902, device_id=7469, class_code=787232, name='pci8086,1d2d', model=None, acpi_path='IOACPIPlane:/_SB/PCI0@0/EHC2@1a0000', pci_path='PciRoot(0x0)/Pci(0x1A,0x0)', disable_metal=False, force_compatible=False),
+            device_probe.EHCIController(vendor_id=32902, device_id=7462, class_code=787232, name='pci8086,1d26', model=None, acpi_path='IOACPIPlane:/_SB/PCI0@0/EHC1@1d0000', pci_path='PciRoot(0x0)/Pci(0x1D,0x0)', disable_metal=False, force_compatible=False),
+        ],
+        sdxc_controller=[],
+        ethernet=[
+            device_probe.BroadcomEthernet(vendor_id=5348, device_id=5762, class_code=131072, name='ethernet', model='Broadcom 57762', acpi_path='IOACPIPlane:/_SB/PCI0@0/RP01@1c0000/ETH1@0', pci_path='PciRoot(0x0)/Pci(0x1C,0x0)/Pci(0x0,0x0)', disable_metal=False, force_compatible=False),
+            device_probe.BroadcomEthernet(vendor_id=5348, device_id=5762, class_code=131072, name='ethernet', model='Broadcom 57762', acpi_path='IOACPIPlane:/_SB/PCI0@0/RP02@1c0001/ETH0@0', pci_path='PciRoot(0x0)/Pci(0x1C,0x1)/Pci(0x0,0x0)', disable_metal=False, force_compatible=False),
+        ],
+        wifi=device_probe.Broadcom(vendor_id=5348, device_id=17312, class_code=163840, name='pci14e4,43a0', model=None, acpi_path='IOACPIPlane:/_SB/PCI0@0/RP03@1c0002/ARPT@0', pci_path='PciRoot(0x0)/Pci(0x1C,0x2)/Pci(0x0,0x0)', disable_metal=False, force_compatible=False),
+        cpu=device_probe.CPU(
+            name='Intel(R) Xeon(R) CPU E5-2697 v2 @ 2.70GHz',
+            flags=['FPU', 'VME', 'DE', 'PSE', 'TSC', 'MSR', 'PAE', 'MCE', 'CX8', 'APIC', 'SEP', 'MTRR', 'PGE', 'MCA', 'CMOV', 'PAT', 'PSE36', 'CLFSH', 'DS', 'ACPI', 'MMX', 'FXSR', 'SSE', 'SSE2', 'SS', 'HTT', 'TM', 'PBE', 'SSE3', 'PCLMULQDQ', 'DTES64', 'MON', 'DSCPL', 'VMX', 'SMX', 'EST', 'TM2', 'SSSE3', 'CX16', 'TPR', 'PDCM', 'SSE4.1', 'SSE4.2', 'x2APIC', 'POPCNT', 'AES', 'PCID', 'XSAVE', 'OSXSAVE', 'TSCTMR', 'AVX1.0', 'RDRAND', 'F16C'],
+            leafs=['RDWRFSGS', 'SMEP', 'ERMS', 'MDCLEAR', 'IBRS', 'STIBP', 'L1DF', 'SSBD'],
+        ),
+        oclp_version=None,
+        opencore_version=None,
+        bluetooth_chipset='BRCM20702B0',
+        ambient_light_sensor=False,
+        third_party_sata_ssd=False,
+        secure_boot_model=None,
+        secure_boot_policy=0,
+        firmware_vendor='Apple',
+    )
+
 
 class Hackintosh:
 

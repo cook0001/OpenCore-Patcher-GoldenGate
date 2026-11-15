@@ -65,6 +65,8 @@ class PatcherValidation:
             example_data.MacPro.MacPro41_Modern_AMD,
             example_data.MacPro.MacPro41_51__Flashed_Modern_AMD,
             example_data.MacPro.MacPro41_51_Flashed_NVIDIA_WEB_DRIVERS,
+            example_data.MacPro.MacPro61_Stock,
+            example_data.MacPro.MacPro61_NVMe_Upgrade,
         ]
 
         self.valid_dumps_native = [
@@ -237,7 +239,7 @@ class PatcherValidation:
 
         atexit.register(self._unmount_dmg)
 
-        for supported_os in [os_data.os_data.big_sur, os_data.os_data.monterey, os_data.os_data.ventura, os_data.os_data.sonoma, os_data.os_data.sequoia]:
+        for supported_os in [os_data.os_data.big_sur, os_data.os_data.monterey, os_data.os_data.ventura, os_data.os_data.sonoma, os_data.os_data.sequoia, os_data.os_data.tahoe]:
             for i in range(0, 10):
                 self._validate_root_patch_files(supported_os, i)
 

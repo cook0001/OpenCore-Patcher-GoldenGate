@@ -99,7 +99,7 @@ class InstallerCreation():
         if can_copy_on_write(installer_path, ia_tmp) is False:
             # Ensure we have enough space for the duplication when CoW is not supported
             space_available = utilities.get_free_space()
-            space_needed = Path(ia_tmp).stat().st_size
+            space_needed = sum(f.stat().st_size for f in Path(installer_path).rglob("*") if f.is_file() and not f.is_symlink())
             if space_available < space_needed:
                 logging.info("Not enough free space to create installer.sh")
                 logging.info(f"{utilities.human_fmt(space_available)} available, {utilities.human_fmt(space_needed)} required")

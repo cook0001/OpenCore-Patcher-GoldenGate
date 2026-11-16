@@ -755,6 +755,17 @@ class SettingsFrame(wx.Frame):
                     ],
                     "override_function": self._update_global_settings,
                 },
+                "Golden Gate (macOS 27) R&D Mode": {
+                    "type": "checkbox",
+                    "value": self.constants.rd_goldengate,
+                    "variable": "rd_goldengate",
+                    "description": [
+                        "Experimental R&D toggle for macOS 27",
+                        "Golden Gate installer discovery and",
+                        "validation paths.",
+                    ],
+                    "warning": "Golden Gate (macOS 27) support is strictly experimental R&D and does not provide complete boot or root-patching support on legacy Macs.\n\nOnly enable this option for testing and development. Are you sure you want to continue?",
+                },
                 "Statistics": {
                     "type": "title",
                 },

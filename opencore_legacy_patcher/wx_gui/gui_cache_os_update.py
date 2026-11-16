@@ -12,6 +12,7 @@ import threading
 from pathlib import Path
 
 from .. import constants
+from ..datasets import os_data
 from ..support import kdk_handler, utilities, metallib_handler
 from ..wx_gui import gui_support, gui_download
 
@@ -45,7 +46,7 @@ class OSUpdateFrame(wx.Frame):
         # Check if we need to patch the system volume
         results = HardwarePatchsetDetection(
             constants=self.constants,
-            xnu_major=int(self.os_data[1][:2]),
+            xnu_major=os_data.os_conversion.build_to_kernel(self.os_data[1], self.os_data[0]),
             xnu_minor=0, # We can't determine this from the build number
             os_build=self.os_data[1],
             os_version=self.os_data[0],

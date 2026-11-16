@@ -141,6 +141,7 @@ class Constants:
         # Patcher Settings
         ## Internal settings
         self.allow_oc_everywhere:       bool = False  # Set whether Patcher can be run on unsupported Macs
+        self.rd_goldengate:             bool = False  # Enable experimental Golden Gate (macOS 27) R&D support
         self.gui_mode:                  bool = False  # Determine whether running in a GUI
         self.cli_mode:                  bool = True  #  Determine if running in CLI mode
         self.validate:                  bool = False  # Enable validation testing for CI

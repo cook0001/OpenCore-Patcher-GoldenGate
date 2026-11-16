@@ -114,6 +114,8 @@ class OpenCoreLegacyPatcher:
 
         # Generate defaults
         defaults.GenerateDefaults(self.computer.real_model, True, self.constants)
+        if "--rd_goldengate" in sys.argv:
+            self.constants.rd_goldengate = True
         threading.Thread(target=analytics_handler.Analytics(self.constants).send_analytics).start()
 
         if utilities.check_cli_args() is None:

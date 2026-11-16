@@ -49,6 +49,10 @@ class arguments:
         Parses arguments passed to the patcher
         """
 
+        if self.args.rd_goldengate:
+            logging.info("Enabling experimental Golden Gate (macOS 27) R&D mode")
+            self.constants.rd_goldengate = True
+
         if self.args.validate:
             self._validation_handler()
             return

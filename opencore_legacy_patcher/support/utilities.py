@@ -592,6 +592,7 @@ def check_cli_args():
     parser.add_argument("--moderate_smbios", help="Moderate SMBIOS Patching", action="store_true", required=False)
     parser.add_argument("--disable_tb", help="Disable Thunderbolt on 2013-2014 MacBook Pros", action="store_true", required=False)
     parser.add_argument("--force_surplus", help="Force SurPlus in all newer OSes", action="store_true", required=False)
+    parser.add_argument("--rd_goldengate", help="Enable experimental Golden Gate (macOS 27) R&D support", action="store_true", required=False)
 
     # Building args requiring value values (ie. --model iMac12,2)
     parser.add_argument("--model", action="store", help="Set custom model", required=False)

@@ -31,7 +31,21 @@ class os_data(enum.IntEnum):
     sonoma =        23
     sequoia =       24
     tahoe =         25
+    golden_gate =   27
     max_os =        99
+
+
+_MAJOR_OS_TO_KERNEL = {
+    11: os_data.big_sur,
+    12: os_data.monterey,
+    13: os_data.ventura,
+    14: os_data.sonoma,
+    15: os_data.sequoia,
+    26: os_data.tahoe,
+    27: os_data.golden_gate,
+}
+
+_KERNEL_TO_MAJOR_OS = {kernel.value: str(major) for major, kernel in _MAJOR_OS_TO_KERNEL.items()}
 
 
 class os_conversion:
@@ -48,8 +62,13 @@ class os_conversion:
         """
         if os.startswith("10."):
             return (int(os.split(".")[1]) + 4)
-        else:
-            return (int(os.split(".")[0]) + 9)
+
+        major = int(os.split(".")[0])
+        if major in _MAJOR_OS_TO_KERNEL:
+            return int(_MAJOR_OS_TO_KERNEL[major])
+        if major >= 27:
+            return major
+        return (major + 9)
 
 
     def kernel_to_os(kernel: int) -> str:
@@ -62,10 +81,41 @@ class os_conversion:
         Returns:
             str: OS version
         """
-        if kernel >= os_data.big_sur:
-            return str((kernel - 9))
-        else:
+        if kernel < os_data.big_sur:
             return str((f"10.{kernel - 4}"))
+        if kernel in _KERNEL_TO_MAJOR_OS:
+            return _KERNEL_TO_MAJOR_OS[kernel]
+        if kernel >= os_data.golden_gate:
+            return str(kernel)
+        return str((kernel - 9))
+
+
+    def build_to_kernel(build: str, os_version: str = None) -> int:
+        """
+        Convert macOS build number (and optional OS version) to major XNU version
+        """
+        if os_version:
+            clean_version = os_version.strip().partition(" ")[0]
+            parts = clean_version.split(".")
+            if parts[0].isdigit() and parts[0] != "0" and (not clean_version.startswith("10.") or (len(parts) > 1 and parts[1].isdigit())):
+                return os_conversion.os_to_kernel(clean_version)
+
+        if not build or len(build) < 2 or not build[:2].isdigit():
+            return 0
+
+        build_major = int(build[:2])
+        # Apple skipped Darwin 26; Golden Gate (macOS 27) builds start with "26" while running Darwin 27.
+        if build_major == 26:
+            return int(os_data.golden_gate)
+        return build_major
+
+
+    def recent_releases(max_os: os_data, count: int = 4) -> list:
+        """
+        Return the most recent macOS os_data enum entries up to max_os
+        """
+        releases = [release for release in os_data if release != os_data.max_os and release <= max_os]
+        return releases[-count:]
 
 
     def is_os_newer(source_major: int, source_minor: int, target_major: int, target_minor: int) -> bool:
@@ -88,6 +138,7 @@ class os_conversion:
                 return True
             else:
                 return False
+        return False
 
 
     def convert_kernel_to_marketing_name(kernel: int) -> str:

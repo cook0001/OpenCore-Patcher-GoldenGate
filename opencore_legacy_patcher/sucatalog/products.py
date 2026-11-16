@@ -14,7 +14,8 @@ from functools import cached_property
 from .url       import CatalogURL
 from .constants import CatalogVersion, SeedType
 
-from ..support import network_handler
+from ..datasets import os_data
+from ..support  import network_handler
 
 
 class CatalogProducts:
@@ -24,18 +25,21 @@ class CatalogProducts:
         install_assistants_only       (bool): Only list InstallAssistant products
         only_vmm_install_assistants   (bool): Only list VMM-x86_64-compatible InstallAssistant products
         max_install_assistant_version (CatalogVersion): Maximum InstallAssistant version to list
+        allow_encrypted_assets        (bool): Include encrypted MobileAsset entries
     """
     def __init__(self,
                  catalog: dict,
                  install_assistants_only: bool = True,
                  only_vmm_install_assistants: bool = True,
-                 max_install_assistant_version: CatalogVersion = CatalogVersion.TAHOE
+                 max_install_assistant_version: CatalogVersion = CatalogVersion.TAHOE,
+                 allow_encrypted_assets: bool = False
                 ) -> None:
-        self.catalog:             dict = catalog
-        self.ia_only:             bool = install_assistants_only
-        self.vmm_only:            bool = only_vmm_install_assistants
-        self.max_ia_version: packaging = packaging.version.parse(f"{max_install_assistant_version.value}.99.99")
-        self.max_ia_catalog: CatalogVersion = max_install_assistant_version
+        self.catalog:                dict = catalog
+        self.ia_only:                bool = install_assistants_only
+        self.vmm_only:               bool = only_vmm_install_assistants
+        self.max_ia_version:         packaging = packaging.version.parse(f"{max_install_assistant_version.value}.99.99")
+        self.max_ia_catalog:         CatalogVersion = max_install_assistant_version
+        self.allow_encrypted_assets: bool = allow_encrypted_assets
 
 
     def _legacy_parse_info_plist(self, data: dict) -> dict:
@@ -83,7 +87,8 @@ class CatalogProducts:
         With macOS Sequoia, the Info.plist is no longer present in the InstallAssistant's assets
         """
         _does_support_vmm = False
-        for entry in data["Assets"]:
+        _saw_encrypted = False
+        for entry in data.get("Assets", []):
             if "SupportedDeviceModels" not in entry:
                 continue
             if "OSVersion" not in entry:
@@ -95,6 +100,9 @@ class CatalogProducts:
                     continue
 
             _does_support_vmm = True
+            if bool(entry.get("_IsEncrypted", False)) and not self.allow_encrypted_assets:
+                _saw_encrypted = True
+                continue
 
             build   = entry["Build"]
             version = entry["OSVersion"]
@@ -114,6 +122,8 @@ class CatalogProducts:
         if _does_support_vmm is False:
             if self.vmm_only:
                 return {"Missing VMM Support": True}
+        if _saw_encrypted:
+            return {"Encrypted Asset": True}
 
         return {}
 
@@ -220,7 +230,7 @@ class CatalogProducts:
             for installer in products:
                 if installer["Version"] is None:
                     continue
-                if not installer["Version"].startswith(version.value):
+                if installer["Version"].split(".")[0] != version.value:
                     continue
                 if installer["Catalog"] in [SeedType.CustomerSeed, SeedType.DeveloperSeed, SeedType.PublicSeed]:
                     continue
@@ -234,7 +244,7 @@ class CatalogProducts:
             for installer in products:
                 if installer["Version"] is None:
                     continue
-                if not installer["Version"].startswith(version.value):
+                if installer["Version"].split(".")[0] != version.value:
                     continue
                 try:
                     if packaging.version.parse(installer["Version"]) < _latest_stable_version:
@@ -264,10 +274,17 @@ class CatalogProducts:
         products_copy = list(version_map.values())
 
         # Remove EOL versions (older than n-3)
-        for installer in products:
-            if installer["Version"].split(".")[0] < supported_versions[-4].value:
-                if installer in products_copy:
-                    products_copy.pop(products_copy.index(installer))
+        if supported_versions:
+            min_supported = packaging.version.parse(supported_versions[0].value)
+            for installer in products:
+                if installer["Version"] is None:
+                    continue
+                try:
+                    if packaging.version.parse(installer["Version"]) < min_supported:
+                        if installer in products_copy:
+                            products_copy.pop(products_copy.index(installer))
+                except packaging.version.InvalidVersion:
+                    pass
 
         return products_copy
 
@@ -348,7 +365,7 @@ class CatalogProducts:
                             else:
                                 result = self._parse_mobile_asset_plist(plist_contents)
 
-                            if result == {"Missing VMM Support": True}:
+                            if "Missing VMM Support" in result or "Encrypted Asset" in result:
                                 _product_map = {}
                                 break
 
@@ -410,11 +427,9 @@ class CatalogProducts:
 
             if _product_map["Build"] is not None:
                 if "InstallAssistant" in _product_map:
-                    try:
-                        # Grab first 2 characters of build
-                        _product_map["InstallAssistant"]["XNUMajor"] = int(_product_map["Build"][:2])
-                    except ValueError:
-                        pass
+                    kernel = os_data.os_conversion.build_to_kernel(_product_map["Build"], _product_map["Version"])
+                    if kernel:
+                        _product_map["InstallAssistant"]["XNUMajor"] = kernel
 
             # If version is still None, set to 0.0.0
             if _product_map["Version"] is None:

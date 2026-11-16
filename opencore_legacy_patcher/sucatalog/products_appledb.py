@@ -12,7 +12,7 @@ import packaging.version
 from functools import cached_property
 
 from opencore_legacy_patcher import constants
-from opencore_legacy_patcher.datasets.os_data import os_data
+from opencore_legacy_patcher.datasets.os_data import os_data, os_conversion
 
 from ..support import network_handler
 
@@ -28,9 +28,11 @@ class AppleDBProducts:
     def __init__(
         self,
         global_constants: constants.Constants,
-        max_install_assistant_version: os_data = os_data.tahoe,
+        max_install_assistant_version: os_data = None,
     ) -> None:
         self.constants: constants.Constants = global_constants
+        if max_install_assistant_version is None:
+            max_install_assistant_version = os_data.golden_gate if global_constants.rd_goldengate else os_data.tahoe
 
         try:
             self.data = (
@@ -44,6 +46,16 @@ class AppleDBProducts:
             return
 
         self.max_ia: os_data = max_install_assistant_version
+
+    def _supports_target_device(self, device_map: list, xnu_major: int) -> bool:
+        """
+        Determine whether an AppleDB deviceMap supports the target Intel/R&D scope
+        """
+        if "MacPro7,1" in device_map:
+            return True
+        if self.max_ia >= os_data.golden_gate and xnu_major >= os_data.golden_gate and "VirtualMac2,1" in device_map:
+            return True
+        return False
 
     def _build_installer_name(self, xnu_major: int, beta: bool) -> str:
         """
@@ -62,7 +74,8 @@ class AppleDBProducts:
         """
 
         supported_versions = {
-            os_data(i): [v for v in products if v["InstallAssistant"]["XNUMajor"] == i] for i in range(self.max_ia - 3, self.max_ia + 1)
+            os_release: [v for v in products if v["InstallAssistant"]["XNUMajor"] == os_release]
+            for os_release in os_conversion.recent_releases(self.max_ia)
         }
 
         for versions in supported_versions.values():
@@ -82,15 +95,18 @@ class AppleDBProducts:
             if firmware.get("internal") or firmware.get("sdk") or firmware.get("rsr"):
                 continue
 
-            # AppleDB does not track whether an installer supports the VMM pseudo-identifier,
-            # so we will use MacPro7,1, which supports all macOS versions that we care about.
-            if "MacPro7,1" not in firmware["deviceMap"]:
-                continue
-
             firmware["raw_version"] = firmware["version"].partition(" ")[0]
 
-            xnu_major = int(firmware["build"][:2])
-            beta = firmware.get("beta") or firmware.get("rc")
+            xnu_major = os_conversion.build_to_kernel(firmware["build"], firmware["raw_version"])
+            if xnu_major > self.max_ia:
+                continue
+
+            # AppleDB does not track whether an installer supports the VMM pseudo-identifier,
+            # so use MacPro7,1 up to Tahoe and allow VirtualMac2,1 for Golden Gate when R&D mode is active.
+            if not self._supports_target_device(firmware["deviceMap"], xnu_major):
+                continue
+
+            beta = bool(firmware.get("beta") or firmware.get("rc"))
 
             details = {
                 # Dates in AppleDB are in Cupertino time. There are no times, so pin to 10 AM
@@ -108,14 +124,11 @@ class AppleDBProducts:
                 "InstallAssistant": {"XNUMajor": xnu_major},
             }
 
-            if xnu_major > self.max_ia:
-                continue
-
             for source in firmware.get("sources", []):
                 if source["type"] != "installassistant":
                     continue
 
-                if "MacPro7,1" not in source["deviceMap"]:
+                if not self._supports_target_device(source["deviceMap"], xnu_major):
                     continue
 
                 for link in source["links"]:

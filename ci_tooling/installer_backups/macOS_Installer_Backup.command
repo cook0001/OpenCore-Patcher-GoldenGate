@@ -45,6 +45,7 @@ class InstallerBackup:
                      os_data.os_data.sonoma,
                      os_data.os_data.sequoia,
                      os_data.os_data.tahoe,
+                     os_data.os_data.golden_gate,
                     ],
                  first_run:      bool = False
                 ) -> None:
@@ -55,12 +56,13 @@ class InstallerBackup:
         self._supported_oses = supported_oses
 
         self._os_table = {
-            os_data.os_data.big_sur:  Path(self._directory, "11 Big Sur"),
-            os_data.os_data.monterey: Path(self._directory, "12 Monterey"),
-            os_data.os_data.ventura:  Path(self._directory, "13 Ventura"),
-            os_data.os_data.sonoma:   Path(self._directory, "14 Sonoma"),
-            os_data.os_data.sequoia:  Path(self._directory, "15 Sequoia"),
-            os_data.os_data.tahoe:    Path(self._directory, "26 Tahoe"),
+            os_data.os_data.big_sur:     Path(self._directory, "11 Big Sur"),
+            os_data.os_data.monterey:    Path(self._directory, "12 Monterey"),
+            os_data.os_data.ventura:     Path(self._directory, "13 Ventura"),
+            os_data.os_data.sonoma:      Path(self._directory, "14 Sonoma"),
+            os_data.os_data.sequoia:     Path(self._directory, "15 Sequoia"),
+            os_data.os_data.tahoe:       Path(self._directory, "26 Tahoe"),
+            os_data.os_data.golden_gate: Path(self._directory, "27 Golden Gate"),
         }
 
         for os_version in self._supported_oses:

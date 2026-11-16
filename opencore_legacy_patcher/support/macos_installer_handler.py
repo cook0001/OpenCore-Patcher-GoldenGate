@@ -259,11 +259,7 @@ class LocalInstallerCatalog:
             app_sdk:      str = application_info_plist["DTSDKBuild"] if "DTSDKBuild" in application_info_plist else "Unknown"
             min_required: str = application_info_plist["LSMinimumSystemVersion"] if "LSMinimumSystemVersion" in application_info_plist else "Unknown"
 
-            kernel:       int = 0
-            try:
-                kernel = int(app_sdk[:2])
-            except ValueError:
-                pass
+            kernel: int = os_data.os_conversion.build_to_kernel(app_sdk, app_version)
 
             min_required = os_data.os_conversion.os_to_kernel(min_required) if min_required != "Unknown" else 0
 
@@ -289,6 +285,8 @@ class LocalInstallerCatalog:
                 app_sdk = results[0]
             if results[1] is not None:
                 app_version = results[1]
+            if results[0] is not None or results[1] is not None:
+                kernel = os_data.os_conversion.build_to_kernel(app_sdk, app_version)
 
             application_list.update({
                 application: {

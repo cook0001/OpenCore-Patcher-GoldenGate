@@ -65,15 +65,21 @@ class macOSInstallerDownloadFrame(wx.Frame):
         """
         return wx.Bitmap(wx.Bitmap(icon, wx.BITMAP_TYPE_ICON).ConvertToImage().Rescale(size[0], size[1], wx.IMAGE_QUALITY_HIGH))
 
+    _OS_ICON_INDEX = {
+        os_data.os_data.big_sur:  1,
+        os_data.os_data.monterey: 2,
+        os_data.os_data.ventura:  3,
+        os_data.os_data.sonoma:   4,
+        os_data.os_data.sequoia:  5,
+        os_data.os_data.tahoe:    6,
+    }
+
     def _macos_version_to_icon(self, version: int) -> int:
         """
         Convert macOS version to icon
         """
-        try:
-            self.constants.icons_path[version - 19]
-            return version - 19
-        except IndexError:
-            return 0
+        index = self._OS_ICON_INDEX.get(version, 0)
+        return index if index < len(self.constants.icons_path) else 0
 
 
     def _generate_elements(self, frame: wx.Frame = None) -> None:
@@ -194,7 +200,7 @@ class macOSInstallerDownloadFrame(wx.Frame):
             for item in installers:
                 logging.info(f"- {item['Title']} ({item['Version']} - {item['Build']}):\n  - Size: {utilities.human_fmt(item['InstallAssistant']['Size'])}\n  - Link: {item['InstallAssistant']['URL']}\n")
                 index = self.list.InsertItem(self.list.GetItemCount(), f"{item['Title']}")
-                self.list.SetItemImage(index, self._macos_version_to_icon(int(item['Build'][:2])))
+                self.list.SetItemImage(index, self._macos_version_to_icon(item["InstallAssistant"]["XNUMajor"]))
                 self.list.SetItem(index, 1, item['Version'])
                 self.list.SetItem(index, 2, item['Build'])
                 self.list.SetItem(index, 3, utilities.human_fmt(item['InstallAssistant']['Size']))

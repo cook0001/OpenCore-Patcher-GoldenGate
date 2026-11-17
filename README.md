@@ -7,13 +7,9 @@
 
 ---
 
-> **2018 T2 Mac Support R&D (`rd/2018-mac-support`)**
+> **Tahoe (`macOS 26`) & 2018–2020 T2 R&D**
 >
-> Helping research macOS Tahoe support for 2018 T2 Macs (`MacBookAir8,1`, `MacBookPro15,1`, `MacBookPro15,2`, `Macmini8,1`)?
-> - **Instructions & Mode 1/2/3 Guide**: [2018-volunteer-kit/README.md](./2018-volunteer-kit/README.md)
-> - **Mode 1 Quick Run (Sonoma/Sequoia, read-only)**: run `zsh ./2018-volunteer-kit/collect_2018_mac_diagnostics.command`
-> - **Mode 2 Diagnostic EFI Downloads**: [2018-volunteer-kit-v1 Release](https://github.com/cook0001/OpenCore-Legacy-Patcher/releases/tag/2018-volunteer-kit-v1)
-> - **Post Your `.zip` Bundle**: [Collection Thread (Issue #1)](https://github.com/cook0001/OpenCore-Legacy-Patcher/issues/1) | [All Issues](https://github.com/cook0001/OpenCore-Legacy-Patcher/issues)
+> Looking for `MacPro6,1` Tahoe work, `2018 T2` Volunteer Capture Kits, or upstream PR branches? See [oclp.patchcraft.dev](https://oclp.patchcraft.dev/) and [cook0001/OpenCore-Legacy-Patcher](https://github.com/cook0001/OpenCore-Legacy-Patcher).
 
 ---
 

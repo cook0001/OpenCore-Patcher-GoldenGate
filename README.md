@@ -1,3 +1,12 @@
+> **macOS 27 ("Golden Gate" / Darwin 27) x86_64 R&D (`OpenCore-Patcher-GoldenGate`)**
+>
+> Active experimental `x86_64` kernel bring-up (`26B131` / `Darwin 27.2.0`) and OpenCore `Kernel->Patch` work layered on top of Tahoe & 2018 T2 R&D.
+> - **Status & Telemetry Site**: [goldengate.patchcraft.dev](https://goldengate.patchcraft.dev/)
+> - **Fix Log (Test 12–18 Cause / Effect / Fix)**: [docs/GOLDENGATE-RD.md](./docs/GOLDENGATE-RD.md)
+> - **Standalone Repo**: [cook0001/OpenCore-Patcher-GoldenGate](https://github.com/cook0001/OpenCore-Patcher-GoldenGate) · **Upstream Base**: [dortania/OpenCore-Legacy-Patcher](https://github.com/dortania/OpenCore-Legacy-Patcher)
+
+---
+
 > **2018 T2 Mac Support R&D (`rd/2018-mac-support`)**
 >
 > Helping research macOS Tahoe support for 2018 T2 Macs (`MacBookAir8,1`, `MacBookPro15,1`, `MacBookPro15,2`, `Macmini8,1`)?

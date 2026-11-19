@@ -2,7 +2,7 @@
 >
 > Active experimental `x86_64` kernel bring-up (`26B131` / `Darwin 27.2.0`) and OpenCore `Kernel->Patch` work layered on top of Tahoe & 2018 T2 R&D.
 > - **Status & Telemetry Site**: [goldengate.patchcraft.dev](https://goldengate.patchcraft.dev/)
-> - **Fix Log (Test 12–35 Cause / Effect / Fix, 25 Kernel Patches)**: [docs/GOLDENGATE-RD.md](./docs/GOLDENGATE-RD.md)
+> - **Fix Log (Test 12–64 Cause / Effect / Fix, Kernel + Userspace DSC)**: [docs/GOLDENGATE-RD.md](./docs/GOLDENGATE-RD.md)
 > - **Standalone Repo**: [cook0001/OpenCore-Patcher-GoldenGate](https://github.com/cook0001/OpenCore-Patcher-GoldenGate) · **Upstream Base**: [dortania/OpenCore-Legacy-Patcher](https://github.com/dortania/OpenCore-Legacy-Patcher)
 
 ---

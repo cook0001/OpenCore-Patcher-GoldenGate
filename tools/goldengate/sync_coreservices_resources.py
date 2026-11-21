@@ -21,21 +21,34 @@ CORESERVICES_25G342_APPS = (
     "loginwindow.app",
 )
 
+ADDITIONAL_25G342_APP_PATHS = (
+    "System/Applications/System Settings.app",
+    "System/Applications/Utilities/Terminal.app",
+    "System/Library/CoreServices/Applications/About This Mac.app",
+)
+
 RESOURCE_SUFFIXES = (".nib", ".storyboardc", ".loctable", ".strings")
+EXTRA_APP_RESOURCE_SUFFIXES = RESOURCE_SUFFIXES + (".xml", ".plist")
 LOCALIZATION_DIRS = ("Base.lproj", "en.lproj")
 
 
 def collect_resource_paths(source_root: Path) -> list[Path]:
     collected: list[Path] = []
-    cs_root = source_root / "System" / "Library" / "CoreServices"
-    for app_name in CORESERVICES_25G342_APPS:
-        res_dir = cs_root / app_name / "Contents" / "Resources"
+    targets = [
+        (source_root / "System" / "Library" / "CoreServices" / app_name, RESOURCE_SUFFIXES)
+        for app_name in CORESERVICES_25G342_APPS
+    ] + [
+        (source_root / rel_path, EXTRA_APP_RESOURCE_SUFFIXES)
+        for rel_path in ADDITIONAL_25G342_APP_PATHS
+    ]
+    for app_dir, suffixes in targets:
+        res_dir = app_dir / "Contents" / "Resources"
         if not res_dir.is_dir():
             continue
         scan_dirs = [res_dir] + [res_dir / loc for loc in LOCALIZATION_DIRS if (res_dir / loc).is_dir()]
         for d in scan_dirs:
             for entry in sorted(d.iterdir()):
-                if entry.suffix in RESOURCE_SUFFIXES:
+                if entry.suffix in suffixes:
                     collected.append(entry)
     return collected
 

@@ -1,8 +1,8 @@
 > **macOS 27 ("Golden Gate" / Darwin 27) x86_64 R&D (`OpenCore-Patcher-GoldenGate`)**
 >
-> Active experimental native `x86_64` bring-up (`26B131` / `macOS 27.2.1` / `Darwin 27.2.0`) — **Live Finder Desktop + Dock + `usb-kbd`/`usb-mouse` HID verified in KVM Test 89** — layered on top of Tahoe & 2018 T2 R&D.
+> Active experimental native `x86_64` bring-up (`26B131` / `macOS 27.2.1` / `Darwin 27.2.0`) — **Live Finder Desktop + Golden Gate Wallpaper + Dock + Terminal + About This Mac + `usb-kbd`/`usb-mouse` HID verified in KVM Test 90** — layered on top of Tahoe & 2018 T2 R&D.
 > - **Status & Telemetry Site**: [goldengate.patchcraft.dev](https://goldengate.patchcraft.dev/)
-> - **Fix Log (Test 12–89 Cause / Effect / Fix, Kernel + Userspace DSC + Desktop)**: [docs/GOLDENGATE-RD.md](./docs/GOLDENGATE-RD.md)
+> - **Fix Log (Test 12–90 Cause / Effect / Fix, Kernel + Userspace DSC + Full Desktop)**: [docs/GOLDENGATE-RD.md](./docs/GOLDENGATE-RD.md)
 > - **Standalone Repo**: [cook0001/OpenCore-Patcher-GoldenGate](https://github.com/cook0001/OpenCore-Patcher-GoldenGate) · **Upstream Base**: [dortania/OpenCore-Legacy-Patcher](https://github.com/dortania/OpenCore-Legacy-Patcher)
 
 ---

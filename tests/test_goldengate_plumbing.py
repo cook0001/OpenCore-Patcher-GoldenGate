@@ -390,20 +390,34 @@ class TestGoldenGateTools(unittest.TestCase):
             finder_res.mkdir(parents=True)
             (finder_res / "Localizable.loctable").write_bytes(b"loc")
 
+            ss_res = root / "System/Applications/System Settings.app/Contents/Resources"
+            ss_res.mkdir(parents=True)
+            (ss_res / "ExtensionDict.xml").write_bytes(b"<plist/>")
+            (ss_res / "Sidebar.plist").write_bytes(b"<plist/>")
+
             out_tgz = Path(tmpdir) / "res.tgz"
             count = scr.build_archive(root, out_tgz)
-            self.assertEqual(count, 3)
+            self.assertEqual(count, 5)
 
             with tarfile.open(out_tgz, "r:gz") as tf:
                 names = sorted(tf.getnames())
             self.assertEqual(
                 names,
                 [
+                    "System/Applications/System Settings.app/Contents/Resources/ExtensionDict.xml",
+                    "System/Applications/System Settings.app/Contents/Resources/Sidebar.plist",
                     "System/Library/CoreServices/Finder.app/Contents/Resources/Localizable.loctable",
                     "System/Library/CoreServices/Setup Assistant.app/Contents/Resources/Base.lproj/CreateUserAccountView.nib",
                     "System/Library/CoreServices/Setup Assistant.app/Contents/Resources/Base.lproj/PrivacyController.nib",
                 ],
             )
+
+    def test_menubar_feature_flag_override_plist(self):
+        plist_path = Path(__file__).resolve().parent.parent / "tools/goldengate/feature_flags/MenuBar.plist"
+        with plist_path.open("rb") as f:
+            data = plistlib.load(f)
+        self.assertIs(data["MenuBarQFA"]["Enabled"], False)
+        self.assertIs(data["LiveActivitiesQFA"]["Enabled"], False)
 
 
 if __name__ == "__main__":

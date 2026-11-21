@@ -312,5 +312,99 @@ class TestInstallerHandlerDetectAndCLI(unittest.TestCase):
             self.assertTrue(args.rd_goldengate)
 
 
+class TestGoldenGateTools(unittest.TestCase):
+
+    def test_dsc_exports_trie_roundtrip(self):
+        from tools.goldengate import dsc_trie
+
+        for n in (0, 1, 127, 128, 16383, 16384, 0x12345678):
+            encoded = dsc_trie.encode_uleb(n)
+            decoded, end = dsc_trie.parse_uleb(encoded, 0)
+            self.assertEqual(decoded, n)
+            self.assertEqual(end, len(encoded))
+
+        exports = {
+            b"_alpha": ("val", 0, 0x1000),
+            b"_alpha_beta": ("val", 0, 0x2040),
+            b"_alpha_reexp": ("reexp", 0x08, 3, b"_target_sym"),
+            b"_gamma_stub": ("stub", 0x10, 0x3000, 0x4000),
+            b"_$s13WindowManager22ExposeGestureAssertionCMn": ("val", 0, 1195352),
+        }
+        raw = dsc_trie.build_exports_trie(exports)
+        self.assertEqual(len(raw) % 8, 0)
+        self.assertEqual(dsc_trie.parse_exports_trie(raw), exports)
+
+    def test_codedirectory_16k_slot_rehash(self):
+        import hashlib
+        import struct
+        from tools.goldengate import dsc_trie
+
+        n_slots = 4
+        cd_header_len = 44
+        hash_off = cd_header_len
+        cd_len = hash_off + n_slots * 32
+        cd_off = 20
+        sb_len = cd_off + cd_len
+
+        sb = bytearray(sb_len)
+        struct.pack_into(">III", sb, 0, dsc_trie.CS_MAGIC_EMBEDDED_SIGNATURE, sb_len, 1)
+        struct.pack_into(">II", sb, 12, 0, cd_off)
+        struct.pack_into(
+            ">IIIIIIIII",
+            sb,
+            cd_off,
+            dsc_trie.CS_MAGIC_CODEDIRECTORY,
+            cd_len,
+            0x20400,
+            0,
+            hash_off,
+            0,
+            0,
+            n_slots,
+            n_slots * dsc_trie.CS_PAGE_SIZE_16K,
+        )
+        struct.pack_into(">BBBB", sb, cd_off + 36, 32, 2, 0, 14)
+
+        page1 = b"\xAB" * dsc_trie.CS_PAGE_SIZE_16K
+        page3 = b"\xCD" * dsc_trie.CS_PAGE_SIZE_16K
+        updated = dsc_trie.rehash_codedirectory_slots(sb, {1: page1, 3: page3})
+
+        self.assertEqual(updated[1], hashlib.sha256(page1).digest())
+        self.assertEqual(updated[3], hashlib.sha256(page3).digest())
+        self.assertEqual(bytes(sb[cd_off + hash_off + 32 : cd_off + hash_off + 64]), updated[1])
+        self.assertEqual(bytes(sb[cd_off + hash_off + 96 : cd_off + hash_off + 128]), updated[3])
+
+    def test_sync_coreservices_resources_collect_and_archive(self):
+        import tarfile
+        from tools.goldengate import sync_coreservices_resources as scr
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir) / "donor"
+            sa_base = root / "System/Library/CoreServices/Setup Assistant.app/Contents/Resources/Base.lproj"
+            sa_base.mkdir(parents=True)
+            (sa_base / "PrivacyController.nib").write_bytes(b"nib1")
+            (sa_base / "CreateUserAccountView.nib").write_bytes(b"nib2")
+            (sa_base / "ignored.png").write_bytes(b"png")
+
+            finder_res = root / "System/Library/CoreServices/Finder.app/Contents/Resources"
+            finder_res.mkdir(parents=True)
+            (finder_res / "Localizable.loctable").write_bytes(b"loc")
+
+            out_tgz = Path(tmpdir) / "res.tgz"
+            count = scr.build_archive(root, out_tgz)
+            self.assertEqual(count, 3)
+
+            with tarfile.open(out_tgz, "r:gz") as tf:
+                names = sorted(tf.getnames())
+            self.assertEqual(
+                names,
+                [
+                    "System/Library/CoreServices/Finder.app/Contents/Resources/Localizable.loctable",
+                    "System/Library/CoreServices/Setup Assistant.app/Contents/Resources/Base.lproj/CreateUserAccountView.nib",
+                    "System/Library/CoreServices/Setup Assistant.app/Contents/Resources/Base.lproj/PrivacyController.nib",
+                ],
+            )
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -418,6 +418,7 @@ class TestGoldenGateTools(unittest.TestCase):
             data = plistlib.load(f)
         self.assertIs(data["MenuBarQFA"]["Enabled"], False)
         self.assertIs(data["LiveActivitiesQFA"]["Enabled"], False)
+        self.assertEqual(data["Overflow"]["DevelopmentPhase"], "FeatureComplete")
 
 
 if __name__ == "__main__":

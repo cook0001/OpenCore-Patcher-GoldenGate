@@ -20,4 +20,4 @@ This repository is an independent research fork derived from [dortania/OpenCore-
 
 ## Contact
 
-For privacy or security questions regarding this repository, open an issue or security advisory at [https://github.com/cook0001/OpenCore-Patcher-GoldenGate/issues](https://github.com/cook0001/OpenCore-Patcher-GoldenGate/issues).
+For privacy or security questions regarding this repository, email [support@patchcraft.dev](mailto:support@patchcraft.dev) or open an issue / security advisory at [https://github.com/cook0001/OpenCore-Patcher-GoldenGate/issues](https://github.com/cook0001/OpenCore-Patcher-GoldenGate/issues).

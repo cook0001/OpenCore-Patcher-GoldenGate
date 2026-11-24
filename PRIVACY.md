@@ -1,25 +1,23 @@
 # Privacy Policy
 
-OpenCore Legacy Patcher may collect pseudo-anonymized data about the host system and the OpenCore Legacy Patcher application. This data is used to improve the project and to help diagnose issues. The data collected is as follows:
+**Repository:** [https://github.com/cook0001/OpenCore-Patcher-GoldenGate](https://github.com/cook0001/OpenCore-Patcher-GoldenGate)  
+**Project Site:** [https://goldengate.patchcraft.dev/](https://goldengate.patchcraft.dev/)  
+**Legal & Attributions:** [https://patchcraft.dev/legal.html](https://patchcraft.dev/legal.html)
 
-* System's UUID as a SHA1 hash
-  * This is used to identify the system and to prevent duplicate reports
-  * Cannot be used to identify the system without the user providing the UUID
-* Application name and version
-* System's OS version
-* System's model name, GPUs present and firmware vendor
-  * May include more hardware information in the future (ex. CPU, WiFi, etc)
-* General country code of system's reported region
-  * ex. `US`, `CA`, etc
+## Telemetry & Crash Reporting
 
-Identifiable data such as IP addresses, MAC addresses, serial numbers, etc. are not collected.
+Builds and research tooling in this repository (`cook0001/OpenCore-Patcher-GoldenGate`) compile with empty `ANALYTICS_SERVER` and `SITE_KEY` values in `opencore_legacy_patcher/support/analytics_handler.py`. **No background telemetry, hardware UUIDs, or crash logs are transmitted** to PatchCraft or to Dortania.
 
-In the future, crash logs may also be collected to help with diagnosing issues.
-----------
+## User-Initiated Network Requests
 
-Users who wish to opt-out can do so either via the application's preferences or via the following command:
-```
-defaults write com.dortania.opencore-legacy-patcher DisableCrashAndAnalyticsReporting -bool true
-```
+Network requests occur only when you explicitly invoke actions that fetch external catalogs, packages, or updates (such as Apple Software Update catalogs, GitHub Releases, or upstream Dortania KDK/Metallib manifests).
 
-To have your data removed, please contact us via our [Discord server](https://discord.gg/rqdPgH8xSN) and provide the UUID of your system.
+## Upstream Attribution & Non-Affiliation
+
+> This product includes software developed by Dortania and OpenCore Legacy Patcher contributors.
+
+This repository is an independent research fork derived from [dortania/OpenCore-Legacy-Patcher](https://github.com/dortania/OpenCore-Legacy-Patcher) under the 4-clause BSD license in [LICENSE.txt](LICENSE.txt). It is not affiliated with or endorsed by Dortania or Apple Inc.
+
+## Contact
+
+For privacy or security questions regarding this repository, open an issue or security advisory at [https://github.com/cook0001/OpenCore-Patcher-GoldenGate/issues](https://github.com/cook0001/OpenCore-Patcher-GoldenGate/issues).

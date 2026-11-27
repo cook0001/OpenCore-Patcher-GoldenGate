@@ -420,6 +420,45 @@ class TestGoldenGateTools(unittest.TestCase):
         self.assertIs(data["LiveActivitiesQFA"]["Enabled"], False)
         self.assertEqual(data["Overflow"]["DevelopmentPhase"], "FeatureComplete")
 
+    def test_dsc_reader_decode_ptr(self):
+        from tools.goldengate.dsc_tools import DSCReader
+
+        reader = DSCReader.__new__(DSCReader)
+        reader.cache_base = 0x7FF800000000
+        self.assertEqual(reader.decode_ptr(0), 0)
+        self.assertEqual(reader.decode_ptr(0x7FF812345678), 0x7FF812345678)
+        self.assertEqual(reader.decode_ptr(0x8000000012345678), 0x7FF812345678)
+
+    def test_boot_patch_script_syntax_and_root_guards(self):
+        import subprocess
+
+        script_path = Path(__file__).resolve().parent.parent / "tools/goldengate/gg_boot_patch.sh"
+        res = subprocess.run(["/bin/sh", "-n", str(script_path)], check=False, capture_output=True, text=True)
+        self.assertEqual(res.returncode, 0, res.stderr)
+        text = script_path.read_text(encoding="utf-8")
+        self.assertIn("01000007", text)
+        self.assertIn("AMDMTLBronzeDriver.bundle", text)
+        self.assertNotIn("default.metallib", text)
+
+    def test_bronze_metal_bridge_sources_and_makefile(self):
+        shim_dir = Path(__file__).resolve().parent.parent / "tools/goldengate/compat_shims"
+        bridge_src = (shim_dir / "gg_bronze_metal_bridge.m").read_text(encoding="utf-8")
+        test_src = (shim_dir / "test_bronze_metal_bridge.m").read_text(encoding="utf-8")
+        makefile = (shim_dir / "Makefile").read_text(encoding="utf-8")
+        for token in (
+            "BronzeMtlDevice",
+            "BronzeMtlCmdBuffer",
+            "BronzeMtlRenderCmdEncoder",
+            "BronzeMtlBlitCmdEncoder",
+            "BronzeMtlComputeCmdEncoder",
+            "MTLBarrierScopeRenderTargets",
+            "synchronizeResource:",
+        ):
+            self.assertIn(token, bridge_src)
+        self.assertIn("gg_uma_test_auto_sync_ops", test_src)
+        self.assertIn("bronze-impostor:", makefile)
+        self.assertIn("bronze-test:", makefile)
+
 
 if __name__ == "__main__":
     unittest.main()

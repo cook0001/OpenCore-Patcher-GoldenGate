@@ -1,8 +1,8 @@
 > **macOS 27 ("Golden Gate" / Darwin 27) x86_64 R&D (`OpenCore-Patcher-GoldenGate`)**
 >
-> Active experimental native `x86_64` bring-up (`26B131` / `macOS 27.2.1` / `Darwin 27.2.0`) — **Full Live Finder Desktop + Top Menu Bar (``) + Golden Gate Wallpaper + Dock + Terminal + About This Mac + `usb-kbd`/`usb-mouse` HID + Secondary Daemon Polish (`0` crashes across all core GUI and `9` secondary daemons in KVM Test 94)** — layered on top of Tahoe & 2018 T2 R&D.
+> Active experimental native `x86_64` bring-up (`26B131` / `macOS 27.2.1` / `Darwin 27.2.0`) — **Bare-Metal `MacPro6,1` External USB Boot to Live Desktop + Dock (`2560x1440` Dual AMD FirePro D500, `30` OpenCore Kernel Patches, Discrete-GCN TBDR + UMA Metal Translation Layer Live-Verified `9/9`)** alongside full KVM Test 94 desktop verification — layered on top of Tahoe & 2018 T2 R&D.
 > - **Status & Telemetry Site**: [goldengate.patchcraft.dev](https://goldengate.patchcraft.dev/)
-> - **Fix Log (Test 12–94 Cause / Effect / Fix, Kernel + Userspace DSC + Desktop + Daemons)**: [docs/GOLDENGATE-RD.md](./docs/GOLDENGATE-RD.md)
+> - **Fix Log (KVM Test 12–94 + Bare-Metal `MacPro6,1` Boot #1–#10)**: [docs/GOLDENGATE-RD.md](./docs/GOLDENGATE-RD.md)
 > - **Standalone Repo**: [cook0001/OpenCore-Patcher-GoldenGate](https://github.com/cook0001/OpenCore-Patcher-GoldenGate) · **Upstream Base**: [dortania/OpenCore-Legacy-Patcher](https://github.com/dortania/OpenCore-Legacy-Patcher)
 
 ---
